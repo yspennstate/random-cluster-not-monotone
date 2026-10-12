@@ -1,0 +1,24 @@
+A  Lemma 2.1: brute force = closed form = second route on 84 (graph, x, q) cases
+B  Table 1
+   q=1/10  Theta(4^13)  edges=53  vertices=41  x1=461/3125 x2=539/3125  p1=0.128555 p2=0.147107  phi1=0.368297232 phi2=0.367797560  drop=4.997e-04  q_l=0.4707
+   q=1/4  Theta(7^27)  edges=190  vertices=164  x1=5831/12500 x2=6419/12500  p1=0.318095 p2=0.339289  phi1=0.497352758 phi2=0.497295807  drop=5.695e-05  q_l=0.6634
+   q=1/2  Theta(10^388)  edges=3881  vertices=3494  x1=6461/10000 x2=6539/10000  p1=0.392503 p2=0.395369  phi1=0.468216762 phi2=0.468216377  drop=3.851e-07  q_l=0.7540
+C  Theorem 1.2
+   q_l: q_2=0.17564, q_3=0.35076, q_4=0.47075, q_5=0.55489, q_7=0.66337, q_10=0.75404, q_20=0.87071, q_100=0.97309
+   l=2: at q=1.001 q_l no decrease on the grid (m<=1e7); at q=q_l/2 a decrease for m=100
+   l=3: at q=1.001 q_l no decrease on the grid (m<=1e7); at q=q_l/2 a decrease for m=50
+   l=5: at q=1.001 q_l no decrease on the grid (m<=1e7); at q=q_l/2 a decrease for m=100
+   l=10: at q=1.001 q_l no decrease on the grid (m<=1e7); at q=q_l/2 a decrease for m=100
+D  arboreal gas on Theta(2,2,2,3)
+   forests by size D_r = [1, 10, 45, 117, 185, 168, 68]  containing e N_r = [0, 1, 9, 33, 62, 60, 24]
+   P(e) = N(b)/D(b); numerator of its derivative = -(2*b + 1)**4*(3*b**6 - 34*b**5 - 85*b**4 - 82*b**3 - 40*b**2 - 10*b - 1)
+   beta* = 13.5743683547 (unique positive root of the sextic)
+   P_20 = 1034020/2926921 = 0.353279094,  P_25 = 829175/2347342 = 0.353239962,  limit 6/17 = 0.352941176
+E  random-cluster measure on Theta(2,2,2,3) for small q
+   y=(20,25): D(q) = q^14 H(q), deg H = 7, signs +-------, H(1/40000) > 0; positive root of H = 2.97698065044e-5 (1/33591.082)
+   y=(512/25,2049/100): D(q) = q^14 H(q), deg H = 7, signs +-------, H(1/32618) > 0; positive root of H = 3.06579382836e-5 (1/32617.979)
+F  cactus
+   measure = product over blocks, bridges Bernoulli(p/(p+q(1-p))), on 3 (p, q) points
+G  q -> 0 at fixed p on theta graphs
+   limiting odds x R0/(R0-1) match brute force and increase on the grid
+ALL CHECKS PASS

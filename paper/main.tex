@@ -1,0 +1,400 @@
+\documentclass[11pt]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,mathtools,enumitem,booktabs}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\numberwithin{equation}{section}
+\newcommand{\Pp}{\mathbb P}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\st}{\le_{\mathrm{st}}}
+\newcommand{\open}{\ \textup{open}}
+\hypersetup{pdftitle={Random-cluster measures with 0<q<1 are not monotone in p},pdfauthor={Yitzchak Shmalo}}
+\title[Random-cluster measures with $0<q<1$ are not monotone]{Random-cluster measures with $0<q<1$\\ are not monotone in $p$}
+\author{Yitzchak Shmalo}
+\address{Einstein Institute of Mathematics, The Hebrew University of Jerusalem, Jerusalem, Israel}
+\email{yitzchak.shmalo@gmail.com}
+\date{12 October 2026}
+\subjclass[2020]{60K35, 82B20, 60C05}
+\keywords{Random-cluster model, FK percolation, monotone coupling, stochastic domination, arboreal gas, spanning forests}
+
+\begin{document}
+\begin{abstract}
+For $q\ge1$ the random-cluster measure $\phi_{G,p,q}$ on a finite graph $G$ is stochastically increasing in the edge parameter $p$. We show that for every $q\in(0,1)$ there are a finite graph $G$, an edge $e$ and $p_1<p_2$ with $\phi_{G,p_1,q}(e\text{ open})>\phi_{G,p_2,q}(e\text{ open})$. In particular the measures $(\phi_{G,p,q})_{p\in[0,1]}$ admit no monotone coupling, which answers a question of Pete for $0<q<1$. The graphs are theta graphs, consisting of an edge $e=uv$ and $m$ internally disjoint paths of length $l$ from $u$ to $v$. On these graphs the probability that $e$ is open has a closed form, and it fails to be increasing in $p$ for all large $m$ exactly when $q<1-e^{1-1/l}/l$; for larger $q$ it is strictly increasing for every $m$. For the arboreal gas, the limit $q\to0$ with $p/(1-p)=\beta q$, the same computation gives a criterion in terms of the path lengths. The smallest theta graph satisfying it has ten edges, and on it the probability of $e$ increases up to $\beta^*\approx13.574$ and decreases after. If every edge of $G$ lies in at most one cycle, a monotone coupling exists for every $q>0$. The finite computations are checked in Lean.
+\end{abstract}
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+Let $G=(V,E)$ be a finite graph. For $p\in[0,1]$ and $q>0$ the random-cluster measure on $\{0,1\}^E$ is
+\begin{equation}\label{eq:fk}
+ \phi_{p,q}(\omega)=\frac1{Z_{p,q}}\,p^{|\omega|}(1-p)^{|E|-|\omega|}q^{k(\omega)},
+\end{equation}
+where $\omega$ is identified with its set of open edges, $|\omega|$ is the number of open edges and $k(\omega)$ is the number of connected components of the graph $(V,\omega)$, isolated vertices included \cite{FK72,Gri06}. We write $\phi_{G,p,q}$ when the graph needs to be named. For $q=1$ this is Bernoulli bond percolation. For $p\in(0,1)$ we put $x=p/(1-p)$, so that $\phi_{p,q}(\omega)$ is proportional to $x^{|\omega|}q^{k(\omega)}$, and $x$ is a strictly increasing function of $p$.
+
+For $q\ge1$ the measure $\phi_{p,q}$ satisfies the FKG lattice condition, and $\phi_{p_1,q}\st\phi_{p_2,q}$ whenever $p_1\le p_2$ \cite[Theorem~3.21]{Gri06}. The whole family then has a monotone coupling, that is, random configurations $(\omega_p)_{p\in[0,1]}$ on one probability space with $\omega_p\sim\phi_{p,q}$ for each $p$ and $\omega_p\le\omega_{p'}$ for $p\le p'$. Grimmett \cite{Gri95} constructs one as the stationary measure of a Markov process on edge labels in $[0,1]^E$, whose update rule is a distribution function only when $q\ge1$; see \cite[Section~13.1]{Pet24}. For $q<1$ the lattice condition fails and neither argument applies. Some monotonicity remains: by the differential formula of \cite[Theorem~3.12]{Gri06}, the expected number of open edges is non-decreasing in $p$ for every $q>0$. Grimmett calls this and a similar monotonicity in $q$ curiosities, ``given the failure of stochastic monotonicity when $q<1$'' \cite[p.~41]{Gri06}. Pete \cite[Question~13.2]{Pet24} asks whether there is a monotone coupling of the measures $\phi_{p,q}$, $p\in[0,1]$, for $q\in[0,1)$. For the arboreal gas, the limit of $\phi_{p,q}$ as $q\to0$ with $x=\beta q$, the thesis of Halberstam states, citing private correspondence with Poudevigne, that stochastic monotonicity in $\beta$ fails on some finite graph \cite[p.~18]{Hal23}; no example is given there. Halberstam and Hutchcroft write that it remains open whether the arboreal gas is stochastically monotone in $\beta$ or in its boundary conditions, in their discussion of infinite-volume limits on $\Z^d$ \cite{HH24}. On $\Z^2$ with $q<1$ even the existence of a critical point is open \cite{BFO25}.
+
+Our first result settles the finite-graph question for $0<q<1$.
+
+\begin{theorem}\label{thm:main}
+For every $q\in(0,1)$ there are a finite simple graph $G$, an edge $e$ of $G$ and $0<p_1<p_2<1$ such that
+\[
+ \phi_{G,p_1,q}(e\open)>\phi_{G,p_2,q}(e\open).
+\]
+In particular $\phi_{G,p_1,q}$ is not stochastically dominated by $\phi_{G,p_2,q}$, and the measures $(\phi_{G,p,q})_{p\in[0,1]}$ admit no monotone coupling.
+\end{theorem}
+
+The second statement follows from the first, since $\{e\open\}$ is an increasing event and a monotone coupling would give $\phi_{p_1,q}(e\open)=\Pp(e\in\omega_{p_1})\le\Pp(e\in\omega_{p_2})=\phi_{p_2,q}(e\open)$. Theorem~\ref{thm:main} answers Question~13.2 of \cite{Pet24} in the negative for $0<q<1$. The case $q=0$ is discussed in Section~\ref{sec:remarks}.
+
+The graphs are theta graphs. For integers $l_1,\dots,l_m\ge2$ let $\Theta(l_1,\dots,l_m)$ be the graph with two vertices $u,v$ joined by an edge $e$ and by $m$ internally disjoint paths of lengths $l_1,\dots,l_m$. It is a simple graph with $1+\sum_il_i$ edges and $2+\sum_i(l_i-1)$ vertices. We write $\Theta(l^m)$ when all $m$ paths have length $l$. Throughout, $e$ denotes the edge $uv$.
+
+\begin{theorem}\label{thm:threshold}
+Let $l\ge2$ and $q_l=1-e^{1-1/l}/l$.
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=2em]
+\item If $0<q<q_l$, there is $m_0$ such that for every $m\ge m_0$ there are $0<p_1<p_2<1$ with $\phi_{\Theta(l^m),p_1,q}(e\open)>\phi_{\Theta(l^m),p_2,q}(e\open)$.
+\item If $q_l\le q<1$, then $\phi_{\Theta(l^m),p,q}(e\open)$ is a strictly increasing function of $p\in(0,1)$ for every $m\ge1$.
+\end{enumerate}
+\end{theorem}
+
+Numerically $q_2\approx0.1756$, $q_3\approx0.3508$, $q_5\approx0.5549$, $q_{10}\approx0.7540$ and $q_{100}\approx0.9731$. Since $\log(1-q_l)=1-1/l-\log l$ is strictly decreasing in $l\ge1$ and tends to $-\infty$, the thresholds $q_l$ increase to $1$, so part~(a) gives Theorem~\ref{thm:main}. Part~(b) shows that $q_l$ is the exact threshold for these graphs. It concerns the edge $e$ only and does not assert that $\phi_{\Theta(l^m),p,q}$ is stochastically increasing in $p$.
+
+The value of $m$ in part~(a) grows quickly with $l$ and as $q$ approaches $q_l$ (Remark~\ref{rem:growth}). Table~\ref{tab:witnesses} lists one explicit example for each of $q=1/10$, $1/4$ and $1/2$; each was checked in exact rational arithmetic and in Lean (Section~\ref{sec:lean}).
+
+\begin{table}[ht]
+\caption{Witnesses for Theorem~\ref{thm:main}. The graph is $\Theta(l^m)$ and $\phi_i=\phi_{p_i,q}(e\open)$, rounded to nine digits.}\label{tab:witnesses}
+\begin{tabular}{@{}cccccccc@{}}
+\toprule
+$q$ & graph & $|E|$ & $|V|$ & $p_1$ & $p_2$ & $\phi_1$ & $\phi_2$\\
+\midrule
+$1/10$ & $\Theta(4^{13})$ & 53 & 41 & $461/3586$ & $539/3664$ & $0.368297232$ & $0.367797560$\\
+$1/4$ & $\Theta(7^{27})$ & 190 & 164 & $5831/18331$ & $6419/18919$ & $0.497352758$ & $0.497295807$\\
+$1/2$ & $\Theta(10^{388})$ & 3881 & 3494 & $6461/16461$ & $6539/16539$ & $0.468216762$ & $0.468216377$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The comparison inequalities \cite[Theorem~3.21]{Gri06} give $\mathrm{Bernoulli}(p)\st\phi_{p,q}\st\mathrm{Bernoulli}(p/(p+q(1-p)))$ for $q<1$, so that $\phi_{p,q}(e\open)$ lies between $p$ and $x/(x+q)$. In Table~\ref{tab:witnesses} this interval has length at least $0.17$ at each $p_i$, while the decreases are $5.0\cdot10^{-4}$, $5.7\cdot10^{-5}$ and $3.9\cdot10^{-7}$.
+
+The arboreal gas on $G$ with parameter $\beta>0$ is the probability measure $\Pp_\beta$ on spanning forests of $G$ (sets $F\subseteq E$ containing no cycle) with $\Pp_\beta(F)$ proportional to $\beta^{|F|}$. Writing $c(\omega)=|\omega|-|V|+k(\omega)$ for the cycle rank of $(V,\omega)$, the weight in \eqref{eq:fk} with $x=\beta q$ is
+\begin{equation}\label{eq:cyclerank}
+ x^{|\omega|}q^{k(\omega)}=q^{|V|}\,\beta^{|\omega|}q^{c(\omega)},
+\end{equation}
+so as $q\to0$ with $\beta$ fixed, $\phi_{p,q}$ converges to $\Pp_\beta$ \cite{HH24}. The second result describes the edge $e$ under the arboreal gas on theta graphs, and the random-cluster measure with small $q$ on one ten-edge graph.
+
+\begin{theorem}\label{thm:arboreal}
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=2em]
+\item On $\Theta(l_1,\dots,l_m)$ let $\kappa=1-\sum_{i=1}^m(l_i-1)/(2l_i)$. If $\kappa<0$, then $\Pp_\beta(e\in F)$ is strictly decreasing in $\beta$ on $[\beta_0,\infty)$ for some $\beta_0$. If $\kappa\ge0$, it is strictly increasing on $[\beta_0,\infty)$ for some $\beta_0$.
+\item On $\Theta(2,2,2,3)$, which has ten edges and seven vertices, $\Pp_\beta(e\in F)$ is strictly increasing on $(0,\beta^*]$ and strictly decreasing on $[\beta^*,\infty)$, where $\beta^*=13.5743\ldots$ is the unique positive root of
+\[
+ S(\beta)=3\beta^6-34\beta^5-85\beta^4-82\beta^3-40\beta^2-10\beta-1.
+\]
+As $\beta\to\infty$ it tends to $6/17$.
+\item On $\Theta(2,2,2,3)$, for every $q\in(0,1/40000]$,
+\[
+ \phi_{p_1,q}(e\open)>\phi_{p_2,q}(e\open),\qquad p_i=\frac{y_iq}{1+y_iq},\quad y_1=20,\ y_2=25.
+\]
+\end{enumerate}
+\end{theorem}
+
+The condition $\kappa<0$ reads $\sum_i(1-1/l_i)>2$, or $\sum_i1/l_i<m-2$. A theta graph with at most ten edges has $\sum_il_i\le9$. For $m\le2$ the condition fails; for $m=3$ the harmonic and arithmetic mean inequality gives $\sum_i1/l_i\ge9/\sum_il_i\ge1$; for $m=4$ the only such graphs are $\Theta(2,2,2,2)$, with $\kappa=0$, and $\Theta(2,2,2,3)$, with $\kappa=-1/12$; and $m\ge5$ would need $\sum_il_i\ge10$. So part~(b) is the smallest case of part~(a). Part~(c) is a perturbation of part~(b): at $q=0$ the inequality in~(c) is $\Pp_{20}(e\in F)>\Pp_{25}(e\in F)$.
+
+Finally, the graphs in Theorems~\ref{thm:main}--\ref{thm:arboreal} contain many cycles through each of $u$ and $v$, and some such structure is needed.
+
+\begin{proposition}\label{prop:cactus}
+If every edge of $G$ lies in at most one cycle, then for every $q>0$ the measures $(\phi_{G,p,q})_{p\in[0,1]}$ admit a monotone coupling.
+\end{proposition}
+
+Section~\ref{sec:theta} computes the marginal of $e$ on theta graphs, Section~\ref{sec:threshold} proves Theorems~\ref{thm:main} and~\ref{thm:threshold}, Section~\ref{sec:arboreal} proves Theorem~\ref{thm:arboreal} and Section~\ref{sec:cactus} proves Proposition~\ref{prop:cactus}. Section~\ref{sec:remarks} discusses the case $q=0$ and edge-transitive graphs, and Section~\ref{sec:lean} describes the computer checks.
+
+\section{Theta graphs}\label{sec:theta}
+
+\begin{lemma}\label{lem:theta}
+On $\Theta(l_1,\dots,l_m)$, for $q>0$ and $x=p/(1-p)>0$,
+\begin{equation}\label{eq:odds}
+ \frac{\phi_{p,q}(e\open)}{\phi_{p,q}(e\ \textup{closed})}=O(x):=x\,\frac{1+V(x)}{q+V(x)},\qquad 1+V(x)=\prod_{i=1}^m\bigl(1+V_{l_i}(x)\bigr),
+\end{equation}
+where
+\[
+ V_l(x)=\frac{q}{(1+q/x)^l-1}.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $P_1,\dots,P_m$ be the paths and $\omega_i$ the restriction of $\omega$ to $P_i$. Call $P_i$ full if all its edges are open. The vertices $u$ and $v$ are connected in $(V,\omega)$ if and only if $e$ is open or some path is full. An internal vertex of $P_i$ is adjacent only to edges of $P_i$, so every component of $(V,\omega)$ that contains neither $u$ nor $v$ consists of internal vertices of a single path. If $P_i$ is full there is no such component on $P_i$. If $\omega_i$ has $j<l_i$ open edges, the $l_i+1$ vertices of $P_i$ together with these edges form a forest with $l_i+1-j$ components, two of which contain $u$ and $v$; so $P_i$ carries $l_i-1-j$ components of $(V,\omega)$ that contain neither $u$ nor $v$. Hence $k(\omega)$ is the sum of these numbers plus $1$ if $u$ and $v$ are connected and plus $2$ otherwise.
+
+For a path of length $l$ put
+\[
+ A_l=x^l,\qquad B_l=\sum_{j=0}^{l-1}\binom lj x^jq^{l-1-j}=\frac{(x+q)^l-x^l}{q},
+\]
+the weights of its full state and of its other states. Summing $x^{|\omega|}q^{k(\omega)}$ over the configurations with $e$ open, and over those with $e$ closed, gives
+\[
+ Z_{\rm open}=xq\prod_{i}(A_{l_i}+B_{l_i}),\qquad
+ Z_{\rm closed}=q\Bigl(\prod_i(A_{l_i}+B_{l_i})-\prod_iB_{l_i}\Bigr)+q^2\prod_iB_{l_i}.
+\]
+With $1+V_l=(A_l+B_l)/B_l$, that is $V_l=qx^l/((x+q)^l-x^l)=q/((1+q/x)^l-1)$, the ratio is
+\[
+ \frac{Z_{\rm open}}{Z_{\rm closed}}=\frac{x\prod_i(1+V_{l_i})}{\prod_i(1+V_{l_i})-(1-q)}=x\,\frac{1+V}{q+V}.\qedhere
+\]
+\end{proof}
+
+Lemma~\ref{lem:theta} is an instance of the series and parallel reductions for the multivariate Tutte polynomial \cite{Sok05}: $V_l$ is the effective weight of $l$ edges of weight $x$ in series, and $1+V=\prod_i(1+V_{l_i})$ is the parallel rule. Since $\phi_{p,q}(e\open)=O/(1+O)$ is a strictly increasing function of $O$, and $x$ of $p$, the probability that $e$ is open is non-decreasing in $p$ on an interval exactly when $O$ is non-decreasing in $x$ on the corresponding interval.
+
+\section{The threshold}\label{sec:threshold}
+
+For $l\ge2$ and $t>0$ put
+\[
+ \kappa_l(t)=\frac{t(1+t)^{l-1}}{(1+t)^l-1}=\frac{(1+t)^{l-1}}{\sum_{j=0}^{l-1}(1+t)^j}.
+\]
+Then $0<\kappa_l(t)<1$, and $\kappa_l(t)\to1$ as $t\to\infty$, since each term of the denominator other than $(1+t)^{l-1}$ is $o((1+t)^{l-1})$.
+
+\begin{lemma}\label{lem:derivative}
+On $\Theta(l_1,\dots,l_m)$, with $O$ and $V$ as in Lemma~\ref{lem:theta} and $t=q/x$,
+\begin{equation}\label{eq:derivative}
+ x\frac{d}{dx}\log O(x)=1-\frac{(1-q)\rho}{q+V},\qquad \rho=\sum_{i=1}^m\frac{V_{l_i}}{1+V_{l_i}}\,l_i\,\kappa_{l_i}(t).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+From \eqref{eq:odds},
+\[
+ x\frac{d}{dx}\log O=1+xV'\Bigl(\frac1{1+V}-\frac1{q+V}\Bigr)=1-\frac{(1-q)}{q+V}\cdot\frac{xV'}{1+V},
+\]
+and $xV'/(1+V)=x\frac d{dx}\log(1+V)=\sum_ixV_{l_i}'/(1+V_{l_i})$. For one path, with $s=(1+t)^l-1$ we have $V_l=q/s$ and $x\,ds/dx=l(1+t)^{l-1}x\,dt/dx=-lt(1+t)^{l-1}$, so
+\[
+ xV_l'=-\frac q{s^2}\,x\frac{ds}{dx}=V_l\,\frac{lt(1+t)^{l-1}}{s}=V_l\,l\,\kappa_l(t).
+\]
+Hence $xV'/(1+V)=\rho$.
+\end{proof}
+
+On $\Theta(l^m)$ the quantities in \eqref{eq:derivative} are $q+V=(1+V_l)^m-1+q$ and $\rho=m\,l\,\kappa_l(t)\,V_l/(1+V_l)$. For $\lambda\ge0$ let
+\[
+ f(\lambda)=(1-q)l\lambda-(e^\lambda-1+q).
+\]
+This is a strictly concave function with $f(0)=-q$. When $l(1-q)>1$ its maximum over $\R$ is attained at $\lambda_0=\log(l(1-q))>0$ and equals
+\[
+ f(\lambda_0)=(1-q)\bigl(l\log(l(1-q))-l+1\bigr),
+\]
+which is positive if and only if $\log(l(1-q))>1-1/l$, that is, if and only if $q<q_l$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:threshold}\textup{(a)}]
+Let $0<q<q_l$. Then $l(1-q)>e^{1-1/l}>1$, so $\lambda_0>0$ and $f(\lambda_0)>0$. As $x$ increases from $0$ to $\infty$, $t=q/x$ decreases from $\infty$ to $0$ and $V_l(x)$ increases continuously from $0$ to $\infty$. Let $x_m$ be the solution of $(1+V_l(x_m))^m=e^{\lambda_0}$. Then $V_l(x_m)=e^{\lambda_0/m}-1\to0$, so $x_m\to0$ and $t_m=q/x_m\to\infty$ as $m\to\infty$. At $x=x_m$ we have $q+V=e^{\lambda_0}-1+q$ and
+\[
+ \rho=m\bigl(1-e^{-\lambda_0/m}\bigr)\,l\,\kappa_l(t_m)\longrightarrow\lambda_0 l.
+\]
+Hence $(1-q)\rho-(q+V)\to f(\lambda_0)>0$, and by \eqref{eq:derivative} there is $m_0$ such that for $m\ge m_0$ the derivative of $\log O$ is negative at $x_m$. Then $O$ is strictly decreasing near $x_m$; choosing $x_1<x_2$ there and $p_i=x_i/(1+x_i)$ gives $\phi_{p_1,q}(e\open)>\phi_{p_2,q}(e\open)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:threshold}\textup{(b)}]
+Let $q_l\le q<1$, $m\ge1$ and $x>0$, and put $\lambda=m\log(1+V_l)>0$, so that $q+V=e^\lambda-1+q$. Since $\kappa_l<1$ and $v/(1+v)<\log(1+v)$ for $v>0$,
+\[
+ \rho=m\,l\,\kappa_l(t)\frac{V_l}{1+V_l}<l\,m\log(1+V_l)=l\lambda.
+\]
+Since $q\ge q_l$, we have $f\le0$ on $[0,\infty)$: if $l(1-q)\le1$ then $f$ is decreasing on $[0,\infty)$ and $f\le f(0)<0$, and otherwise $f\le f(\lambda_0)\le0$. Hence $(1-q)\rho<(1-q)l\lambda\le e^\lambda-1+q=q+V$, and by \eqref{eq:derivative} the derivative of $\log O$ is positive at every $x>0$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Given $q\in(0,1)$, choose $l$ with $q_l>q$ and apply Theorem~\ref{thm:threshold}(a).
+\end{proof}
+
+\begin{remark}\label{rem:growth}
+Write $\kappa_l(t)=1/\sum_{i=0}^{l-1}(1+t)^{-i}=1-1/t+O(t^{-2})$. In the proof of part~(a), $V_l(x_m)\sim q\,t_m^{-l}$ and $V_l(x_m)\sim\lambda_0/m$, so $t_m\sim(qm/\lambda_0)^{1/l}$ and $1-\kappa_l(t_m)$ is of order $m^{-1/l}$. Since $f(\lambda_0)$ tends to $0$ as $q\uparrow q_l$, the required $m$ is large when $l$ is large or $q$ is close to $q_l$. The examples in Table~\ref{tab:witnesses} were located by evaluating \eqref{eq:derivative} in floating point and then confirmed in exact arithmetic from \eqref{eq:odds}; for $q=1/2$ this needs $388$ paths of length $10$.
+\end{remark}
+
+\section{The arboreal gas}\label{sec:arboreal}
+
+\begin{lemma}\label{lem:forest}
+Under the arboreal gas on $\Theta(l_1,\dots,l_m)$ with parameter $\beta>0$,
+\[
+ \frac{\Pp_\beta(e\in F)}{\Pp_\beta(e\notin F)}=g(\beta):=\frac{\beta}{1+\sum_{i=1}^mc_{l_i}(\beta)},\qquad c_l(\beta)=\frac{\beta^l}{(1+\beta)^l-\beta^l}.
+\]
+\end{lemma}
+
+\begin{proof}
+The cycles of $\Theta(l_1,\dots,l_m)$ are $e$ together with one path, and two paths together. So a set $F$ containing $e$ is a forest if and only if no path is full, and a set $F$ not containing $e$ is a forest if and only if at most one path is full. The non-full states of a path of length $l$ have total weight $T_l=(1+\beta)^l-\beta^l$ and the full state has weight $\beta^l$. Hence the forests containing $e$ have total weight $\beta\prod_iT_{l_i}$, and those not containing $e$ have total weight $\prod_iT_{l_i}+\sum_i\beta^{l_i}\prod_{j\ne i}T_{l_j}=\prod_iT_{l_i}\bigl(1+\sum_ic_{l_i}\bigr)$.
+\end{proof}
+
+Lemma~\ref{lem:forest} is also the limit of Lemma~\ref{lem:theta} as $q\to0$ with $x=\beta q$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:arboreal}\textup{(a)}]
+Since $(1+\beta)^l-\beta^l=l\beta^{l-1}\bigl(1+\frac{l-1}{2\beta}+\frac{(l-1)(l-2)}{6\beta^2}+O(\beta^{-3})\bigr)$, we have
+\[
+ c_l(\beta)=\frac\beta l-\frac{l-1}{2l}+\frac{l^2-1}{12l\beta}+O(\beta^{-2})\qquad(\beta\to\infty).
+\]
+Therefore
+\[
+ \frac1{g(\beta)}=\frac{1+\sum_ic_{l_i}(\beta)}{\beta}=s+\frac\kappa\beta+\frac d{\beta^2}+O(\beta^{-3}),\qquad s=\sum_i\frac1{l_i},\quad d=\sum_i\frac{l_i^2-1}{12l_i}>0.
+\]
+The function $1/g$ is rational and bounded as $\beta\to\infty$, so it is analytic in $z=1/\beta$ near $z=0$ and the expansion may be differentiated term by term:
+\[
+ \frac{d}{d\beta}\,\frac1{g(\beta)}=-\frac\kappa{\beta^2}-\frac{2d}{\beta^3}+O(\beta^{-4}).
+\]
+If $\kappa<0$ this is positive for all large $\beta$, so $g$ is eventually strictly decreasing. If $\kappa>0$ it is negative for all large $\beta$, and so it is if $\kappa=0$, since then it equals $-2d/\beta^3+O(\beta^{-4})$ with $d>0$; in both cases $g$ is eventually strictly increasing. Since $\Pp_\beta(e\in F)=g/(1+g)$, the same holds for $\Pp_\beta(e\in F)$.
+\end{proof}
+
+For example, on $\Theta(2,2,2,2)$, where $\kappa=0$, one finds $g(\beta)=\beta(1+2\beta)/(1+2\beta+4\beta^2)$, whose derivative has numerator $1+4\beta$, so $\Pp_\beta(e\in F)$ is increasing for all $\beta>0$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:arboreal}\textup{(b)}]
+For $\Theta(2,2,2,3)$, Lemma~\ref{lem:forest} gives $\Pp_\beta(e\in F)=N(\beta)/D(\beta)$ with $N=\beta T_2^3T_3$ and $D=N+T_2^3T_3+3\beta^2T_2^2T_3+\beta^3T_2^3$, where $T_2=1+2\beta$ and $T_3=1+3\beta+3\beta^2$. Expanding,
+\begin{align*}
+ N(\beta)&=\beta+9\beta^2+33\beta^3+62\beta^4+60\beta^5+24\beta^6,\\
+ D(\beta)&=1+10\beta+45\beta^2+117\beta^3+185\beta^4+168\beta^5+68\beta^6,
+\end{align*}
+and the coefficients of $D$ and $N$ count the forests of each size, and those containing $e$. A direct computation gives
+\[
+ N'(\beta)D(\beta)-N(\beta)D'(\beta)=-(1+2\beta)^4S(\beta).
+\]
+The coefficients of $S$ have exactly one sign change, so by Descartes' rule $S$ has exactly one positive root $\beta^*$, with $S<0$ on $(0,\beta^*)$ and $S>0$ on $(\beta^*,\infty)$; and $S(13.57)<0<S(13.58)$. This gives the monotonicity on the two intervals. The limit is the ratio of the leading coefficients, $24/68=6/17$.
+\end{proof}
+
+\begin{remark}\label{rem:layers}
+For large $\beta$, the measure $\Pp_\beta$ on $\Theta(2,2,2,3)$ is close to the mixture of the uniform spanning tree and the uniform two-component spanning forest with weights proportional to $68\beta$ and $168$. The edge $e$ lies in $24$ of the $68$ spanning trees and in $60$ of the $168$ two-component forests, and $60/168=5/14>6/17=24/68$. As $\beta$ grows the mixture moves towards the uniform spanning tree, which is why $\Pp_\beta(e\in F)$ decreases. The same comparison shows that on this graph the uniform forest with five edges is not stochastically dominated by the uniform forest with six edges. In general, comparing the term of order $1/\beta$ in $\Pp_\beta(e\in F)$ with the expansion in the proof of part~(a) shows that on any theta graph $\kappa<0$ holds exactly when $e$ is more likely under the uniform two-component spanning forest than under the uniform spanning tree.
+\end{remark}
+
+\begin{proof}[Proof of Theorem~\ref{thm:arboreal}\textup{(c)}]
+By \eqref{eq:cyclerank}, with $x=yq$,
+\[
+ \frac{\phi_{p,q}(e\open)}{\phi_{p,q}(e\ \textup{closed})}=\frac{Z^{\rm o}(y,q)}{Z^{\rm c}(y,q)},\qquad Z^{\rm o}(y,q)=\sum_{\omega\ni e}y^{|\omega|}q^{c(\omega)},\quad Z^{\rm c}(y,q)=\sum_{\omega\not\ni e}y^{|\omega|}q^{c(\omega)}.
+\]
+On $\Theta(2,2,2,3)$ the cycle rank takes the values $0,\dots,4$, so $Z^{\rm o}$ and $Z^{\rm c}$ are polynomials of degree at most $4$ in $q$, and their constant terms are $N(y)$ and $D(y)-N(y)$. Put $H(q)=Z^{\rm o}(20,q)Z^{\rm c}(25,q)-Z^{\rm o}(25,q)Z^{\rm c}(20,q)$. Enumerating the $2^{10}$ edge sets gives
+\begin{align*}
+ H(q)=5\,\bigl(&705304886124519-23664236666534341200\,q-930616620731941836250\,q^2\\
+ &-14722755569252784937500\,q^3-122533866710234275390625\,q^4\\
+ &-590763266992187500000000\,q^5-1630447265625000000000000\,q^6\\
+ &-1953125000000000000000000\,q^7\bigr).
+\end{align*}
+All coefficients except the constant term are negative, so $H$ is strictly decreasing on $[0,\infty)$, and $H(1/40000)>0$. Hence $H(q)>0$ for $0<q\le1/40000$, and since all four partition functions are positive, this is the inequality $Z^{\rm o}(20,q)/Z^{\rm c}(20,q)>Z^{\rm o}(25,q)/Z^{\rm c}(25,q)$ between the odds of $e$ at $p_1$ and at $p_2$.
+\end{proof}
+
+The positive root of $H$ is $2.97698\ldots\cdot10^{-5}$, about $1/33591$. With $y_1=512/25$ and $y_2=2049/100$ the same argument applies for $0<q\le1/32618$.
+
+\section{Graphs whose cycles are edge-disjoint}\label{sec:cactus}
+
+\begin{proof}[Proof of Proposition~\ref{prop:cactus}]
+Suppose every edge of $G$ lies in at most one cycle. The blocks of $G$ are then single edges (bridges) and cycles, and every cycle of a subgraph of $G$ is a cycle of $G$ and lies in one block. So the cycle rank $c(\omega)$ is the number of cycles of $G$ all of whose edges are open. By \eqref{eq:cyclerank} with $w=x/q=p/(q(1-p))$,
+\[
+ \phi_{p,q}(\omega)\ \propto\ w^{|\omega|}q^{c(\omega)}=\prod_{B}w^{|\omega\cap B|}q^{\mathbf 1\{B\text{ is a cycle and }B\subseteq\omega\}},
+\]
+the product over the blocks $B$ of $G$. Hence under $\phi_{p,q}$ the restrictions of $\omega$ to the blocks are independent. A bridge is open with probability $w/(1+w)=p/(p+q(1-p))$. On a cycle $C$ of length $n$, the number $K$ of open edges satisfies $\Pp(K=k)\propto\binom nk w^kq^{\mathbf 1\{k=n\}}$, and given $K=k$ the set of open edges of $C$ is a uniformly random $k$-subset of $C$, whatever $p$ is.
+
+The law of $K$ is an exponential family in $\log w$ with sufficient statistic $k$: for $w<w'$ the ratio $\Pp_{w'}(K=k)/\Pp_w(K=k)$ is proportional to $(w'/w)^k$, which is increasing in $k$. A monotone likelihood ratio implies stochastic order, so the distribution function $F_p$ of $K$ under $\phi_{p,q}$ is non-increasing in $p$, and $w$ is increasing in $p$.
+
+Now take, independently, a uniform variable $U_f$ for each bridge $f$, and for each cycle $C$ a uniform variable $U_C$ and a uniformly random ordering of the edges of $C$. Declare a bridge $f$ open in $\omega_p$ if $U_f\le p/(p+q(1-p))$. On a cycle $C$ let $K_p=\min\{k:F_p(k)\ge U_C\}$ and declare open in $\omega_p$ the first $K_p$ edges of $C$ in its random ordering. Then $\omega_p\sim\phi_{p,q}$ for each $p\in[0,1]$ (at $p=0$ and $p=1$ both sides are the point masses on $\emptyset$ and on $E$), and $\omega_p$ is non-decreasing in $p$, because $F_p$ is non-increasing in $p$.
+\end{proof}
+
+\section{Remarks}\label{sec:remarks}
+
+\subsection*{The case \texorpdfstring{$q=0$}{q=0}}
+For a connected graph $G$ and fixed $p\in(0,1)$, the measure $\phi_{p,q}$ converges as $q\to0$ to the measure on connected spanning subgraphs of $G$ with weight $x^{|\omega|}$, and we take this as the random-cluster measure with $q=0$. The uniform spanning tree is its limit as $p\to0$, and Exercise~13.8 of \cite{Pet24} asks for an explicit monotone coupling of the uniform spanning tree and the uniform connected subgraph with one more edge on a particular graph. Our examples do not settle this case. On $\Theta(l_1,\dots,l_m)$ a connected spanning subgraph has at most one closed edge on each path, and the odds of $e$ under the limit measure are
+\[
+ O_0(x)=\frac{xR_0}{R_0-1},\qquad R_0=\prod_i\Bigl(1+\frac x{l_i}\Bigr).
+\]
+With $u_i=x/l_i$ one has $x\frac d{dx}\log O_0=1-\frac1{R_0-1}\sum_i\frac{u_i}{1+u_i}$, which is positive because $R_0-1\ge\sum_iu_i>\sum_iu_i/(1+u_i)$. So on theta graphs the marginal of $e$ is increasing in $p$ when $q=0$. The construction of Section~\ref{sec:cactus} also passes to the limit: on a graph whose cycles are edge-disjoint, every bridge is open and a cycle of length $n$ has $n$ or $n-1$ open edges, with odds $x/n$, so a monotone coupling exists.
+
+\subsection*{Edge-transitive graphs}
+If the automorphism group of $G$ acts transitively on $E$, as for a discrete torus, then $\phi_{p,q}(e\open)$ is the same for all edges and equals the expected number of open edges divided by $|E|$, which is non-decreasing in $p$ for every $q>0$ by \cite[Theorem~3.12]{Gri06}. A counterexample on such a graph would therefore have to use an increasing event other than a single edge. Whether $\phi_{p,q}$ is stochastically increasing in $p$ on tori, or on boxes of $\Z^d$, for $0<q<1$ remains open.
+
+\section{Computer checks and Lean verification}\label{sec:lean}
+
+The repository accompanying this paper contains a Python script \texttt{code/checks.py}, which checks every numerical inequality in the paper in exact rational arithmetic. It compares the closed form of Lemma~\ref{lem:theta}, and a second evaluation that enumerates the states of each path separately, with direct enumeration of all $2^{|E|}$ configurations on $84$ pairs of a theta graph (fourteen graphs with one to five paths of lengths $2$ to $6$) and a point $(x,q)$. It computes the entries of Table~\ref{tab:witnesses} by both evaluations, together with the comparison bounds, compares \eqref{eq:derivative} with finite differences of $\log O$, checks the polynomials of Section~\ref{sec:arboreal} and the product form of Section~\ref{sec:cactus} against enumeration, and evaluates \eqref{eq:derivative} on $\Theta(l^m)$ for $l\in\{2,3,5,10\}$, $m\le10^7$ and $x$ on a logarithmic grid, at $q=1.001\,q_l$, where it has no negative value, and at $q=q_l/2$, where it has one. The finite differences and these scans use floating point.
+
+The file \texttt{lean/RandomCluster.lean} is checked with Lean~4 \cite{Lean} (version~4.33.1), using only the core library. Every theorem in it is proved by \texttt{decide +kernel}, so the kernel itself evaluates the enumeration or the integer arithmetic. It contains:
+\begin{itemize}[leftmargin=2em]\raggedright
+\item \texttt{forest\_counts}: the coefficients of $D$ and $N$ in the proof of Theorem~\ref{thm:arboreal}(b), by enumeration of the $1024$ edge sets of $\Theta(2,2,2,3)$;
+\item \texttt{uniform\_forest\_layers}: the inequality $60\cdot68>24\cdot168$ of Remark~\ref{rem:layers};
+\item \texttt{arboreal\_drop}: $\Pp_{20}(e\in F)>\Pp_{25}(e\in F)$ on $\Theta(2,2,2,3)$;
+\item \texttt{arboreal\_derivative}: the identity $N'D-ND'=-(1+2\beta)^4S$ as an identity of integer polynomials, and $S(13.57)<0<S(13.58)$;
+\item \texttt{fk\_small\_q}: the polynomial $H$ of Theorem~\ref{thm:arboreal}(c), computed by enumeration, has a positive constant term, no positive coefficient of positive degree, and $H(1/40000)>0$;
+\item \texttt{fk\_point}: the inequality of Theorem~\ref{thm:arboreal}(c) at $q=1/40000$, by enumeration;
+\item \texttt{closed\_form\_agrees}: Lemma~\ref{lem:theta} against enumeration on $\Theta(2,2,2,3)$ at $q=1/40000$, $x=20q$;
+\item \texttt{table\_q\_tenth}, \texttt{table\_q\_quarter}, \texttt{table\_q\_half}: the three rows of Table~\ref{tab:witnesses}, in the form $Z_{\rm open}(x_1)Z_{\rm closed}(x_2)>Z_{\rm open}(x_2)Z_{\rm closed}(x_1)$ with all four values positive, where $Z_{\rm open}$ and $Z_{\rm closed}$ are the expressions in the proof of Lemma~\ref{lem:theta} multiplied by a common positive integer.
+\end{itemize}
+The first seven theorems depend on the axiom \texttt{propext} only, and the last three on no axioms. The reduction of Table~\ref{tab:witnesses} to the last three theorems uses Lemma~\ref{lem:theta}, which is proved in Section~\ref{sec:theta} and is not formalized; the graphs in the table are too large for enumeration. The asymptotic arguments of Theorem~\ref{thm:threshold} and Theorem~\ref{thm:arboreal}(a), Descartes' rule in Theorem~\ref{thm:arboreal}(b), and Proposition~\ref{prop:cactus} are not formalized.
+
+\section*{Acknowledgements and funding}
+The research presented in this paper was supported by the European Research
+Council (ERC) under the European Union's Horizon Europe research and
+innovation programme (grant agreement No.~101041711), by the Simons
+Foundation as part of the Collaboration on the Mathematical and Scientific
+Foundations of Deep Learning, by Heights Labs, by Convex Nexus Capital, by
+the Israel Science Foundation (grant number 2258/19), and by the Israel
+Science Foundation (ISF Grant 4101/25). Computational resources were
+provided in part by Google Cloud through its education credits program
+(credit 530550103).
+
+\section*{Declaration of competing interest}
+The author holds equity in Heights Labs and in Convex Nexus Capital and
+has a management role at Convex Nexus Capital. These entities are included
+in the funding declaration above.
+
+\section*{Declaration of generative AI and AI-assisted technologies}
+The paper comes out of Math Brain, an ongoing project on the use of AI systems for research mathematics. Question~13.2 of \cite{Pet24} was one of the open problems in probability on which the project's agents worked in September 2026. On 18 September 2026 scheduled ChatGPT agents (OpenAI; the runs report the model GPT-5.6 Sol) found the ten-edge graph of Theorem~\ref{thm:arboreal} and the interval of small $q$ in part~(c), with exact computer checks. On 10 October 2026 an OpenAI Codex agent wrote the argument of Proposition~\ref{prop:cactus}. On 11 and 12 October 2026 Claude Opus~5.5 (Anthropic), working in Claude Code, found the closed form of Lemma~\ref{lem:theta}, the threshold of Theorem~\ref{thm:threshold} and the criterion of Theorem~\ref{thm:arboreal}(a), searched the literature, and wrote the proofs in their present form, the computer checks, the Lean file of Section~\ref{sec:lean} and the manuscript. The author directed the work and is responsible for the content of the paper and for decisions concerning its dissemination.
+
+\section*{Data availability}
+No data were used. The code and the Lean file are available at \url{https://github.com/yspennstate/random-cluster-not-monotone}.
+
+\begin{thebibliography}{99}
+
+\bibitem{BFO25}
+V.~Beffara, C.~Faipeur and T.~Oke,
+\emph{A new bound for the critical point of the FK model for $q<1$},
+preprint, 2025.
+\href{https://arxiv.org/abs/2512.16486}{arXiv:2512.16486}.
+
+\bibitem{FK72}
+C.~M.~Fortuin and P.~W.~Kasteleyn,
+\emph{On the random-cluster model. I. Introduction and relation to other models},
+Physica \textbf{57} (1972), 536--564.
+\href{https://doi.org/10.1016/0031-8914(72)90045-6}{doi:10.1016/0031-8914(72)90045-6}.
+
+\bibitem{Gri06}
+G.~Grimmett,
+\emph{The Random-Cluster Model},
+Grundlehren der mathematischen Wissenschaften \textbf{333}, Springer, Berlin, 2006.
+\href{https://doi.org/10.1007/978-3-540-32891-9}{doi:10.1007/978-3-540-32891-9}.
+
+\bibitem{Gri95}
+G.~Grimmett,
+\emph{The stochastic random-cluster process and the uniqueness of random-cluster measures},
+Ann. Probab. \textbf{23} (1995), 1461--1510.
+\href{https://doi.org/10.1214/aop/1176987791}{doi:10.1214/aop/1176987791}.
+
+\bibitem{Hal23}
+N.~Halberstam,
+\emph{A Walk through the Forest: the Geometry and Topology of Random Systems},
+PhD thesis, University of Cambridge, 2023.
+
+\bibitem{HH24}
+N.~Halberstam and T.~Hutchcroft,
+\emph{Uniqueness of the infinite tree in low-dimensional random forests},
+Probab. Math. Phys. \textbf{5} (2024), 1185--1216.
+\href{https://doi.org/10.2140/pmp.2024.5.1185}{doi:10.2140/pmp.2024.5.1185};
+\href{https://arxiv.org/abs/2302.12224}{arXiv:2302.12224}.
+
+\bibitem{Lean}
+L.~de~Moura and S.~Ullrich,
+\emph{The Lean~4 theorem prover and programming language},
+in: Automated Deduction -- CADE~28, Lecture Notes in Comput. Sci. \textbf{12699}, Springer, Cham, 2021, 625--635.
+\href{https://doi.org/10.1007/978-3-030-79876-5_37}{doi:10.1007/978-3-030-79876-5\_37}.
+
+\bibitem{Pet24}
+G.~Pete,
+\emph{Probability and Geometry on Groups},
+lecture notes, version of April 3, 2024.
+\url{http://www.math.bme.hu/~gabor}.
+
+\bibitem{Sok05}
+A.~D.~Sokal,
+\emph{The multivariate Tutte polynomial (alias Potts model) for graphs and matroids},
+in: Surveys in Combinatorics 2005, London Math. Soc. Lecture Note Ser. \textbf{327}, Cambridge University Press, Cambridge, 2005, 173--226.
+\href{https://doi.org/10.1017/CBO9780511734885.009}{doi:10.1017/CBO9780511734885.009};
+\href{https://arxiv.org/abs/math/0503607}{arXiv:math/0503607}.
+
+\end{thebibliography}
+\end{document}

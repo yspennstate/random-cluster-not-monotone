@@ -1,0 +1,10 @@
+'RandomCluster.forest_counts' depends on axioms: [propext]
+'RandomCluster.uniform_forest_layers' depends on axioms: [propext]
+'RandomCluster.arboreal_drop' depends on axioms: [propext]
+'RandomCluster.arboreal_derivative' depends on axioms: [propext]
+'RandomCluster.fk_small_q' depends on axioms: [propext]
+'RandomCluster.fk_point' depends on axioms: [propext]
+'RandomCluster.closed_form_agrees' depends on axioms: [propext]
+'RandomCluster.table_q_tenth' does not depend on any axioms
+'RandomCluster.table_q_quarter' does not depend on any axioms
+'RandomCluster.table_q_half' does not depend on any axioms
